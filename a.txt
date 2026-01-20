@@ -1,0 +1,103 @@
+SR_CREATE
+SR_VIEW_OWN
+SR_VIEW_ALL
+SR_ASSIGN
+SR_UPDATE_STATUS
+SR_REPLY
+SR_CLOSE
+SR_ESCALATE
+MASTER_MANAGE
+USER_MANAGE
+REPORT_VIEW
+
+
+Permission	ADMIN	MANAGER	TECHNICIAN	EMPLOYEE	CUSTOMER
+SR_CREATE	✔	✔	          ❌	   ✔   ✔
+SR_VIEW_OWN	✔	✔	           ✔	✔	✔
+SR_VIEW_ALL	✔	✔	           ❌   ❌  ❌
+SR_ASSIGN	✔	✔	           ❌   ❌  ❌
+SR_UPDATE_STATUS	✔	✔	    ✔	❌  ❌
+SR_REPLY	✔	✔	            ✔	✔	 ✔
+SR_CLOSE	✔	✔	            ✔	❌	✔
+SR_ESCALATE	✔	✔	            ❌  ❌  ❌
+MASTER_MANAGE	✔	❌	       ❌  ❌	 ❌
+USER_MANAGE	✔	❌	           ❌  ❌	 ❌
+REPORT_VIEW	✔	✔	            ❌  ❌  ❌
+
+
+User Dashboard (EMPLOYEE + CUSTOMER)
+Technician Dashboard (TECHNICIAN)
+Admin Dashboard (ADMIN + MANAGER)
+✅ Who can sign up?
+
+EMPLOYEE
+CUSTOMER
+
+Admins & Technicians should be created by ADMIN.
+
+if (hasPermission("SR_ASSIGN")) {
+  redirect("/admin/dashboard")
+}
+else if (hasPermission("SR_UPDATE_STATUS")) {
+  redirect("/technician/dashboard")
+}
+else {
+  redirect("/dashboard")
+}
+
+6️⃣ DATABASE STRUCTURE (FINAL)
+User
+ ├── UserID
+ ├── UserType (INTERNAL / CUSTOMER)
+
+Role
+ ├── RoleID
+ ├── RoleCode
+
+ CREATE TABLE Role (
+    RoleID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleName VARCHAR(100) NOT NULL,
+    RoleCode VARCHAR(50) NOT NULL UNIQUE,
+    Description VARCHAR(250),
+    IsActive BIT DEFAULT 1
+);
+
+
+Permission
+ ├── PermissionID
+ ├── PermissionCode
+
+CREATE TABLE Permission (
+    PermissionID INT AUTO_INCREMENT PRIMARY KEY,
+    PermissionCode VARCHAR(100) NOT NULL UNIQUE,
+    Description VARCHAR(250)
+);
+
+UserRole
+ ├── UserID
+ ├── RoleID
+
+ CREATE TABLE UserRole (
+    UserRoleID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL,
+    RoleID INT NOT NULL,
+    CONSTRAINT FK_UR_Role FOREIGN KEY (RoleID) REFERENCES Role(RoleID),
+    UNIQUE (UserID, RoleID)
+);
+
+
+RolePermission
+ ├── RoleID
+ ├── PermissionID
+
+ CREATE TABLE RolePermission (
+    RolePermissionID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleID INT NOT NULL,
+    PermissionID INT NOT NULL,
+    CONSTRAINT FK_RP_Role FOREIGN KEY (RoleID) REFERENCES Role(RoleID),
+    CONSTRAINT FK_RP_Permission FOREIGN KEY (PermissionID) REFERENCES Permission(PermissionID),
+    UNIQUE (RoleID, PermissionID)
+);
+
+
+
