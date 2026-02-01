@@ -1,5 +1,5 @@
-import { getDepartments } from "@/app/action/getDepartmentList";
-import AddUserForm from "./AddUserForm";
+import { getDepartments } from "@/app/action/departments/getDepartmentList";
+import AddUserForm from "../AddEditUserForm";
 
 export default async function AddUserPage() {
   const departments = await getDepartments();

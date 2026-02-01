@@ -25,7 +25,7 @@ export const adminCreateUserSchema = z
       .regex(/^[0-9+]+$/, "Invalid mobile number")
       .optional(),
 
-    roleCode: z.enum(["ADMIN", "TECHNICIAN"]),
+    roleCode: z.string(),
 
     staffInfo: z
       .object({
@@ -48,7 +48,7 @@ export const adminCreateUserSchema = z
   })
   .superRefine((data, ctx) => {
     // Enforce staff info for technicians only
-    if (data.roleCode === "TECHNICIAN" && !data.staffInfo) {
+    if (!(data.roleCode === "ADMIN" || data.roleCode === "USER") && !data.staffInfo) {
       ctx.addIssue({
         path: ["staffInfo"],
         message: "Staff info is required for technician",
@@ -56,12 +56,5 @@ export const adminCreateUserSchema = z
       });
     }
 
-    // Prevent staff info for admins (optional but recommended)
-    if (data.roleCode === "ADMIN" && data.staffInfo) {
-      ctx.addIssue({
-        path: ["staffInfo"],
-        message: "Staff info is not allowed for admin",
-        code: z.ZodIssueCode.custom,
-      });
-    }
+   
   });

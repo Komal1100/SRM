@@ -45,12 +45,15 @@ export async function POST(req: Request) {
         });
 
         if (!user) {
+
             return NextResponse.json({ error: "Invalid email or username" }, { status: 401 });
         }
 
         const isValid = await verifyPassword(password, user.PasswordHash);
 
         if (!isValid) {
+            console.log("Success  ")
+
             return NextResponse.json({ error: "Invalid credentials(password)" }, { status: 401 });
         }
 
@@ -76,7 +79,6 @@ export async function POST(req: Request) {
             path: "/",
         });
 
-        console.log("Success  ", res)
         return res;
     } catch (error) {
         console.error(error);

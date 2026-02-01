@@ -9,9 +9,8 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const user = await getAuthUser();
-  if(!user){
-    redirect("/login")
-  }
+
+  if (!user) redirect("/login");
 
   return (
     <div className="h-screen flex flex-col">
@@ -19,6 +18,7 @@ export default async function DashboardLayout({
 
       <div className="flex flex-1">
         <Sidebar user={user} />
+
         <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
           {children}
         </main>

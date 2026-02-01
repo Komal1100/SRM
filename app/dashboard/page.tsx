@@ -15,12 +15,12 @@ export default async function DashboardPage() {
   const roles = user.roles; // ['ADMIN', 'TECHNICIAN', ...]
 
   if (roles.includes("ADMIN") || roles.includes("MANAGER")) {
-    return <AdminOverview user={user} />;
+    redirect("/dashboard/admin");
   }
 
   if (roles.includes("TECHNICIAN")) {
-    return <TechnicianOverview user={user} />;
+    redirect("/dashboard/technician");
   }
 
-  return <UserOverview user={user} />;
+  redirect("/dashboard/user");
 }

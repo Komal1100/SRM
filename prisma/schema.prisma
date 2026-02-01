@@ -1,12 +1,11 @@
 generator client {
-  provider   = "prisma-client"
-  output     = "../app/generated/prisma"
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
 }
-
 
 model permission {
   PermissionID   Int              @id @default(autoincrement())
@@ -46,11 +45,15 @@ model servicedept {
   UserID                Int
   Created               DateTime             @db.DateTime(0)
   Modified              DateTime             @db.DateTime(0)
+  IsActive              Boolean?             @default(dbgenerated("b'1'")) @db.Bit(1)
+  ManagerStaffID        Int?
+  staff                 staff?               @relation(fields: [ManagerStaffID], references: [StaffID], onDelete: NoAction, onUpdate: NoAction, map: "FK_ServiceDept_Manager")
   user                  user                 @relation(fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: NoAction, map: "FK_ServiceDept_User")
   servicedeptperson     servicedeptperson[]
   servicerequesttype    servicerequesttype[]
 
   @@index([UserID], map: "FK_ServiceDept_User")
+  @@index([ManagerStaffID], map: "FK_ServiceDept_Manager")
 }
 
 model servicedeptperson {
@@ -74,38 +77,39 @@ model servicedeptperson {
 }
 
 model servicerequest {
-  ServiceRequestID                                       Int                   @id @default(autoincrement())
-  ServiceRequestNo                                       String                @db.VarChar(500)
-  ServiceRequestDateTime                                 DateTime              @db.DateTime(0)
+  ServiceRequestID                                       Int                               @id @default(autoincrement())
+  ServiceRequestNo                                       String                            @db.VarChar(500)
+  ServiceRequestDateTime                                 DateTime                          @db.DateTime(0)
   ServiceRequestTypeID                                   Int
-  ServiceRequestTitle                                    String                @db.VarChar(250)
-  ServiceRequestDescription                              String                @db.VarChar(2000)
+  ServiceRequestTitle                                    String                            @db.VarChar(250)
+  ServiceRequestDescription                              String                            @db.VarChar(2000)
   ServiceRequestStatusID                                 Int
   RequestedByStaffID                                     Int?
   AssignedToStaffID                                      Int?
   AssignedByUserID                                       Int?
-  ServiceRequestStatusDateTime                           DateTime?             @db.DateTime(0)
+  ServiceRequestStatusDateTime                           DateTime?                         @db.DateTime(0)
   ServiceRequestStatusByUserID                           Int?
-  ServiceRequestStatusDescription                        String?               @db.VarChar(500)
-  PriorityLevel                                          String?               @db.VarChar(50)
+  ServiceRequestStatusDescription                        String?                           @db.VarChar(500)
+  PriorityLevel                                          String?                           @db.VarChar(50)
   ResourceID                                             Int?
   StudentID                                              Int?
-  AttachmentPath                                         String?               @db.VarChar(250)
-  AttachmentPath2                                        String?               @db.VarChar(250)
-  AttachmentPath3                                        String?               @db.VarChar(250)
-  AttachmentPath4                                        String?               @db.VarChar(250)
-  AttachmentPath5                                        String?               @db.VarChar(250)
-  AttachmentFileOriginalName                             String?               @db.VarChar(250)
+  AttachmentPath                                         String?                           @db.VarChar(250)
+  AttachmentPath2                                        String?                           @db.VarChar(250)
+  AttachmentPath3                                        String?                           @db.VarChar(250)
+  AttachmentPath4                                        String?                           @db.VarChar(250)
+  AttachmentPath5                                        String?                           @db.VarChar(250)
+  AttachmentFileOriginalName                             String?                           @db.VarChar(250)
   UserID                                                 Int
-  Created                                                DateTime              @db.DateTime(0)
-  Modified                                               DateTime              @db.DateTime(0)
-  user_servicerequest_AssignedByUserIDTouser             user?                 @relation("servicerequest_AssignedByUserIDTouser", fields: [AssignedByUserID], references: [UserID], onUpdate: NoAction, map: "FK_SR_AssignedByUser")
-  staff_servicerequest_AssignedToStaffIDTostaff          staff?                @relation("servicerequest_AssignedToStaffIDTostaff", fields: [AssignedToStaffID], references: [StaffID], onUpdate: NoAction, map: "FK_SR_AssignedStaff")
-  staff_servicerequest_RequestedByStaffIDTostaff         staff?                @relation("servicerequest_RequestedByStaffIDTostaff", fields: [RequestedByStaffID], references: [StaffID], onUpdate: NoAction, map: "FK_SR_RequestedStaff")
-  servicerequeststatus                                   servicerequeststatus  @relation(fields: [ServiceRequestStatusID], references: [ServiceRequestStatusID], onDelete: NoAction, onUpdate: NoAction, map: "FK_SR_Status")
-  user_servicerequest_ServiceRequestStatusByUserIDTouser user?                 @relation("servicerequest_ServiceRequestStatusByUserIDTouser", fields: [ServiceRequestStatusByUserID], references: [UserID], onUpdate: NoAction, map: "FK_SR_StatusByUser")
-  servicerequesttype                                     servicerequesttype    @relation(fields: [ServiceRequestTypeID], references: [ServiceRequestTypeID], onDelete: NoAction, onUpdate: NoAction, map: "FK_SR_Type")
-  user_servicerequest_UserIDTouser                       user                  @relation("servicerequest_UserIDTouser", fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: NoAction, map: "FK_SR_User")
+  Created                                                DateTime                          @db.DateTime(0)
+  Modified                                               DateTime                          @db.DateTime(0)
+  user_servicerequest_AssignedByUserIDTouser             user?                             @relation("servicerequest_AssignedByUserIDTouser", fields: [AssignedByUserID], references: [UserID], onUpdate: NoAction, map: "FK_SR_AssignedByUser")
+  staff_servicerequest_AssignedToStaffIDTostaff          staff?                            @relation("servicerequest_AssignedToStaffIDTostaff", fields: [AssignedToStaffID], references: [StaffID], onUpdate: NoAction, map: "FK_SR_AssignedStaff")
+  staff_servicerequest_RequestedByStaffIDTostaff         staff?                            @relation("servicerequest_RequestedByStaffIDTostaff", fields: [RequestedByStaffID], references: [StaffID], onUpdate: NoAction, map: "FK_SR_RequestedStaff")
+  servicerequeststatus                                   servicerequeststatus              @relation(fields: [ServiceRequestStatusID], references: [ServiceRequestStatusID], onDelete: NoAction, onUpdate: NoAction, map: "FK_SR_Status")
+  user_servicerequest_ServiceRequestStatusByUserIDTouser user?                             @relation("servicerequest_ServiceRequestStatusByUserIDTouser", fields: [ServiceRequestStatusByUserID], references: [UserID], onUpdate: NoAction, map: "FK_SR_StatusByUser")
+  servicerequesttype                                     servicerequesttype                @relation(fields: [ServiceRequestTypeID], references: [ServiceRequestTypeID], onDelete: NoAction, onUpdate: NoAction, map: "FK_SR_Type")
+  user_servicerequest_UserIDTouser                       user                              @relation("servicerequest_UserIDTouser", fields: [UserID], references: [UserID], onDelete: Cascade, onUpdate: NoAction, map: "FK_SR_User")
+  servicerequestassignmenthistory                        servicerequestassignmenthistory[]
   servicerequestreply                                    servicerequestreply[]
 
   @@index([AssignedByUserID], map: "FK_SR_AssignedByUser")
@@ -230,47 +234,49 @@ model servicetype {
 }
 
 model staff {
-  StaffID                                                 Int                            @id @default(autoincrement())
+  StaffID                                                 Int                               @id @default(autoincrement())
   UserID                                                  Int
-  StaffCode                                               String?                        @unique(map: "StaffCode") @db.VarChar(50)
-  Department                                              String?                        @db.VarChar(150)
-  Designation                                             String?                        @db.VarChar(150)
-  IsActive                                                Boolean?                       @default(dbgenerated("b'1'")) @db.Bit(1)
-  Created                                                 DateTime                       @db.DateTime(0)
-  Modified                                                DateTime                       @db.DateTime(0)
+  StaffCode                                               String?                           @unique(map: "StaffCode") @db.VarChar(50)
+  Department                                              String?                           @db.VarChar(150)
+  Designation                                             String?                           @db.VarChar(150)
+  IsActive                                                Boolean?                          @default(dbgenerated("b'1'")) @db.Bit(1)
+  Created                                                 DateTime                          @db.DateTime(0)
+  Modified                                                DateTime                          @db.DateTime(0)
+  servicedept                                             servicedept[]
   servicedeptperson                                       servicedeptperson[]
-  servicerequest_servicerequest_AssignedToStaffIDTostaff  servicerequest[]               @relation("servicerequest_AssignedToStaffIDTostaff")
-  servicerequest_servicerequest_RequestedByStaffIDTostaff servicerequest[]               @relation("servicerequest_RequestedByStaffIDTostaff")
+  servicerequest_servicerequest_AssignedToStaffIDTostaff  servicerequest[]                  @relation("servicerequest_AssignedToStaffIDTostaff")
+  servicerequest_servicerequest_RequestedByStaffIDTostaff servicerequest[]                  @relation("servicerequest_RequestedByStaffIDTostaff")
+  servicerequestassignmenthistory                         servicerequestassignmenthistory[]
   servicerequestreply                                     servicerequestreply[]
   servicerequesttypewiseperson                            servicerequesttypewiseperson[]
-  user                                                    user                           @relation(fields: [UserID], references: [UserID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Staff_User")
+  user                                                    user                              @relation(fields: [UserID], references: [UserID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Staff_User")
 
   @@index([UserID], map: "FK_Staff_User")
 }
 
 model user {
-  UserID                                                                     Int                            @id @default(autoincrement())
-  Username                                                                   String                         @unique(map: "Username") @db.VarChar(100)
-  PasswordHash                                                               String                         @db.VarChar(255)
-  Email                                                                      String                         @unique(map: "Email") @db.VarChar(150)
-  MobileNo                                                                   String?                        @db.VarChar(20)
-  IsActive                                                                   Boolean?                       @default(dbgenerated("b'1'")) @db.Bit(1)
-  Created                                                                    DateTime                       @db.DateTime(0)
-  Modified                                                                   DateTime                       @db.DateTime(0)
+  UserID                                                                     Int                               @id @default(autoincrement())
+  Username                                                                   String                            @unique(map: "Username") @db.VarChar(100)
+  PasswordHash                                                               String                            @db.VarChar(255)
+  Email                                                                      String                            @unique(map: "Email") @db.VarChar(150)
+  MobileNo                                                                   String?                           @db.VarChar(20)
+  IsActive                                                                   Boolean?                          @default(dbgenerated("b'1'")) @db.Bit(1)
+  Created                                                                    DateTime                          @db.DateTime(0)
+  Modified                                                                   DateTime                          @db.DateTime(0)
   servicedept                                                                servicedept[]
   servicedeptperson                                                          servicedeptperson[]
-  servicerequest_servicerequest_AssignedByUserIDTouser                       servicerequest[]               @relation("servicerequest_AssignedByUserIDTouser")
-  servicerequest_servicerequest_ServiceRequestStatusByUserIDTouser           servicerequest[]               @relation("servicerequest_ServiceRequestStatusByUserIDTouser")
-  servicerequest_servicerequest_UserIDTouser                                 servicerequest[]               @relation("servicerequest_UserIDTouser")
-  servicerequestreply_servicerequestreply_ServiceRequestStatusByUserIDTouser servicerequestreply[]          @relation("servicerequestreply_ServiceRequestStatusByUserIDTouser")
-  servicerequestreply_servicerequestreply_UserIDTouser                       servicerequestreply[]          @relation("servicerequestreply_UserIDTouser")
+  servicerequest_servicerequest_AssignedByUserIDTouser                       servicerequest[]                  @relation("servicerequest_AssignedByUserIDTouser")
+  servicerequest_servicerequest_ServiceRequestStatusByUserIDTouser           servicerequest[]                  @relation("servicerequest_ServiceRequestStatusByUserIDTouser")
+  servicerequest_servicerequest_UserIDTouser                                 servicerequest[]                  @relation("servicerequest_UserIDTouser")
+  servicerequestassignmenthistory                                            servicerequestassignmenthistory[]
+  servicerequestreply_servicerequestreply_ServiceRequestStatusByUserIDTouser servicerequestreply[]             @relation("servicerequestreply_ServiceRequestStatusByUserIDTouser")
+  servicerequestreply_servicerequestreply_UserIDTouser                       servicerequestreply[]             @relation("servicerequestreply_UserIDTouser")
   servicerequeststatus                                                       servicerequeststatus[]
   servicerequesttype                                                         servicerequesttype[]
   servicerequesttypewiseperson                                               servicerequesttypewiseperson[]
   servicetype                                                                servicetype[]
   staff                                                                      staff[]
   userroles                                                                  userrole[]
-
 }
 
 model userrole {
@@ -278,9 +284,24 @@ model userrole {
   UserID     Int
   RoleID     Int
   role       role @relation(fields: [RoleID], references: [RoleID], onDelete: NoAction, onUpdate: NoAction, map: "FK_UR_Role")
-
-  user user @relation(fields: [UserID], references: [UserID])
+  user       user @relation(fields: [UserID], references: [UserID])
 
   @@unique([UserID, RoleID], map: "UserID")
   @@index([RoleID], map: "FK_UR_Role")
+}
+
+model servicerequestassignmenthistory {
+  ServiceRequestAssignmentHistoryID Int            @id @default(autoincrement())
+  ServiceRequestID                  Int
+  AssignedToStaffID                 Int
+  AssignedByUserID                  Int
+  AssignedDateTime                  DateTime       @db.DateTime(0)
+  Description                       String?        @db.VarChar(250)
+  servicerequest                    servicerequest @relation(fields: [ServiceRequestID], references: [ServiceRequestID], onDelete: Cascade, onUpdate: NoAction, map: "FK_SRAH_Request")
+  staff                             staff          @relation(fields: [AssignedToStaffID], references: [StaffID], onDelete: NoAction, onUpdate: NoAction, map: "FK_SRAH_Staff")
+  user                              user           @relation(fields: [AssignedByUserID], references: [UserID], onDelete: NoAction, onUpdate: NoAction, map: "FK_SRAH_User")
+
+  @@index([ServiceRequestID], map: "FK_SRAH_Request")
+  @@index([AssignedToStaffID], map: "FK_SRAH_Staff")
+  @@index([AssignedByUserID], map: "FK_SRAH_User")
 }

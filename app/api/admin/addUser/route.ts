@@ -5,6 +5,7 @@ import { prisma } from "@/app/lib/prisma";
 import { adminCreateUserSchema } from "@/app/schemas/adminCreateUser";
 import { NextResponse } from "next/server";
 
+
 export async function POST(req: Request) {
     try {
 
@@ -18,12 +19,12 @@ export async function POST(req: Request) {
         }
 
         const data = await req.json();
-        const parsed =  adminCreateUserSchema.safeParse(data)
+        const parsed = adminCreateUserSchema.safeParse(data)
 
         if (!parsed.success) {
-            console.log("Error in parsing"+parsed.error)
+            console.log("Error in parsing" + parsed.error)
             return NextResponse.json(
-                { error: parsed.error + " " +parsed.error.flatten().fieldErrors  },
+                { error: parsed.error + " " + parsed.error.flatten().fieldErrors },
                 { status: 400 }
             );
         }
@@ -40,12 +41,7 @@ export async function POST(req: Request) {
         const normalizedUsername = username.trim().toLowerCase();
         const normalizedEmail = email.trim().toLowerCase();
 
-        // if (!ADMIN_CREATABLE_ROLES.includes(roleCode)) {
-        //     return NextResponse.json(
-        //         { error: "Invalid role for admin creation" },
-        //         { status: 400 }
-        //     );
-        // }
+    
 
 
 
@@ -91,16 +87,12 @@ export async function POST(req: Request) {
                 }
             });
 
-            console.log("User created successfully " , user)
-
-            if (roleCode === "TECHNICIAN") {
+            if (roleCode === "TECHNICIAN" || roleCode === "MANAGER" || roleCode==="EMPLOYEE") {
                 if (!staffInfo) {
                     throw new Error("STAFF_INFO_REQUIRED");
                 }
 
-
-
-
+              
 
                 const staff = await tx.staff.create({
                     data: {
@@ -118,15 +110,14 @@ export async function POST(req: Request) {
                         ServiceDeptID: staffInfo.serviceDeptID,
                         StaffID: staff.StaffID,
                         FromDate: new Date(),
-                        IsHODStaff: staffInfo.isHODStaff ?? false,
-                        UserID: authUser.userId, // who created this
+                        IsHODStaff: roleCode === "MANAGER", 
+                        UserID: authUser.userId,
                         Created: new Date(),
                         Modified: new Date(),
                     },
                 });
-
-
             }
+
 
             return user;
         });
@@ -163,3 +154,4 @@ export async function POST(req: Request) {
 
     }
 }
+
