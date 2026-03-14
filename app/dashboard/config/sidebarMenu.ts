@@ -1,4 +1,4 @@
-import {IconType} from "react-icons";
+import { IconType } from "react-icons";
 import {
   FiHome,
   FiUsers,
@@ -43,18 +43,20 @@ export const SIDEBAR_MENU: SidebarItem[] = [
     roles: ["TECHNICIAN"],
   },
 
-  // {
-  //   label: "My Requests",
-  //   href: "/dashboard/user/requests",
-  //   icon: FiClipboard,
-  //   permissions: ["SR_VIEW_OWN"],
-  // },
+  {
+    label: "My Requests",
+    href: "/dashboard/user/requests",
+    icon: FiClipboard,
+    // permissions: ["SR_VIEW_OWN"],
+    roles: ['CUSTOMER', 'TECHNICIAN', 'EMPLOYEE']
+
+  },
 
   {
     label: "Departments",
     href: "/dashboard/admin/departments",
     icon: FiClipboard,
-    permissions: ["SR_VIEW_OWN"],
+    roles: ['ADMIN'],
   },
 
   {

@@ -1,7 +1,9 @@
 "use client";
 
+import { role } from "@/app/generated/prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
+export type TableMode = 'admin' | 'user'
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -12,6 +14,14 @@ export const columns: ColumnDef<any>[] = [
   {
     header: "Title",
     accessorKey: "ServiceRequestTitle",
+  },
+
+  {
+    header: "User",
+    accessorKey: "user_servicerequest_UserIDTouser.Username",
+    meta: {
+      hideFor: ['user'] as TableMode[]
+    }
   },
 
   {
@@ -42,12 +52,12 @@ export const columns: ColumnDef<any>[] = [
         status === "Pending"
           ? "bg-yellow-100 text-yellow-800"
           : status === "Assigned"
-          ? "bg-blue-100 text-blue-800"
-          : status === "In Progress"
-          ? "bg-purple-100 text-purple-800"
-          : status === "Completed"
-          ? "bg-green-100 text-green-800"
-          : "bg-gray-100 text-gray-800";
+            ? "bg-blue-100 text-blue-800"
+            : status === "In Progress"
+              ? "bg-purple-100 text-purple-800"
+              : status === "Completed"
+                ? "bg-green-100 text-green-800"
+                : "bg-gray-100 text-gray-800";
 
       return (
         <span className={`px-2 py-1 rounded text-sm font-medium ${color}`}>
@@ -73,5 +83,8 @@ export const columns: ColumnDef<any>[] = [
         Assign
       </Link>
     ),
+    meta: {
+      hideFor: ['user'] as TableMode[]
+    }
   },
 ];

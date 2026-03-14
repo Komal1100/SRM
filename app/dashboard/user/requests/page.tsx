@@ -8,16 +8,11 @@ import { columns } from "../../components/requests/columns";
 export default async function RequestListPage() {
   const user = await getAuthUser();
 
-  if (!hasPermission(user, "SR_VIEW_ALL")) {
-    redirect("/dashboard");
-  }
-
   const requests = await getRequestsForUser(user);
-  console.log(requests)
   return (
     <div>
       <h1 className="text-xl font-semibold">Service Requests</h1>
-      <RequestTable data={requests} columns={columns} mode='admin'/>
+      <RequestTable data={requests} columns={columns} mode='user'/>
     </div>
   );
 }

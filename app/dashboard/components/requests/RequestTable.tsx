@@ -7,21 +7,29 @@ import {
 } from "@tanstack/react-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableMode } from "./columns";
 
 interface RequestTableProps {
     data: any[];
     columns: ColumnDef<any, any>[];
+    mode: TableMode,
 }
 
 export default function RequestTable({
     data,
     columns,
+    mode
 }: RequestTableProps) {
+    columns = columns.filter(col => {
+        const hideFor = (col.meta as any)?.hideFor ?? []
+        return !hideFor.includes(mode)
+    })
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
+
 
 
     return (
